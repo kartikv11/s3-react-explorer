@@ -1,0 +1,57 @@
+body {
+  font-family: "Helvetica Neue";
+}
+
+h3 {
+  color: #BF616A;
+}
+
+ul
+{
+    list-style-type: none;
+}
+
+.tree {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #e4e4e4;
+  color: #000000;
+}
+
+.togglable {
+  color: #D78770;
+  cursor: pointer;
+}
+
+.togglable-down::after,
+.togglable-up::after {
+  font-size: 8px;
+  margin-left: 0.5em;
+}
+
+.togglable-down::before {
+  content: "▼";
+  display: inline-block;
+}
+
+.togglable-up::before {
+  content: "▶";
+  display: inline-block;
+}
+
+.content-pane {
+  margin-left: 320px;
+  max-width: 200px;
+  position: fixed;
+  color: #000000;
+
+  pre {
+    font-family: Menlo;
+    font-size: 13px;
+  }
+}

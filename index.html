@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>S3 Bucket Explorer</title>
+    <link rel="stylesheet" href="../shared/css/base.css" />
+    <link rel="stylesheet" href="./css/s3app.css" />
+  </head>
+  <body>
+    <div id="tree">
+    </div>
+    <script src="../../build/react.js"></script>
+    <script src="../../build/react-dom.js"></script>
+    <script src="./s3-listing.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/classnames/2.2.3/index.min.js"></script>
+    <script type="text/babel">
+
+      var S3_BUCKET = "s3.kiwi.locus";
+      var BUCKET_URL = "s3.kiwi.locus.s3.ap-south-1.amazonaws.com/";
+      var tree = {
+      title: "s3.kiwi.locus",
+      childNodes: [
+          {
+          title: "contentFile.txt",
+          content: "This is a text content file. Check other links on the left."
+          },
+          {title: "tests", childNodes: [
+            {title: "unit", childNodes: [
+              {
+              title: "sample.js",
+              content: "This is a sample content file. Check other links on the left."
+              }
+            ]},
+            {title: "noContentFile.txt", content: ""}
+          ]},
+          {title: "samples", childNodes: [
+            {title: "EmptyFolder", childNodes: []},
+            {title: "anotherContentFileAgain.js",
+            content: "This is a anotherContentFileAgain file. Check other links on the left."}
+          ]}
+        ]
+      };
+
+      class TreeNode extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            visible: false,
+            showContent: false
+          };
+          this.toggle = this.toggle.bind(this);
+        }
+
+        toggle() {
+          if(this.props.node.childNodes != null){
+            this.setState({visible: !this.state.visible});
+          }
+          this.setState({showContent: !this.state.showContent});
+        };
+
+        render() {
+          var childNodes;
+          var classObj;
+
+          if (this.props.node.childNodes != null) {
+            childNodes = this.props.node.childNodes.map(function(node, index) {
+              return <li key={index}><TreeNode node={node}/></li>
+            });
+
+            classObj = {
+              togglable: true,
+              "togglable-down": this.state.visible,
+              "togglable-up": !this.state.visible
+            };
+          }
+
+          var style;
+          var contentStyle;
+          if (!this.state.visible) {
+            style = {display: "none"};
+          }
+          if (!this.state.showContent) {
+            contentStyle = {display: "none"};
+          }
+
+          return (
+            <div>
+              <h5 onClick={this.toggle} className={classNames(classObj)}>
+                {this.props.node.title}
+              </h5>
+              <ul style={style}>
+                {childNodes}
+              </ul>
+              <div style={contentStyle} className="content-pane">
+                {this.props.node.content}
+              </div>
+            </div>
+          )};
+        }
+
+        class App extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            content: ""
+          };
+        }
+
+        renderContent(content){
+          console.log(content);
+        }
+
+        render() {
+          return(
+            <div>
+              <div className="tree">
+                <TreeNode
+                node={tree}
+                s3BucketUrl={S3_BUCKET}
+                fileContent={this.state.content}
+                onChangeContent={this.renderContent}
+                />
+              </div>
+            </div>
+        )}
+      };
+
+      ReactDOM.render(
+        <App/>,
+        document.getElementById("tree")
+      );
+    </script>
+  </body>
+</html>
